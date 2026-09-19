@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Personal portfolio of Shajid, a web developer and designer." />
+    <title>Shajid — Web Developer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="noise" aria-hidden="true"></div>
+    <header class="site-header">
+      <a class="brand" href="#home" aria-label="Shajid home">S<span>.</span></a>
+      <button class="nav-toggle" aria-label="Open navigation" aria-expanded="false"><i></i><i></i></button>
+      <nav aria-label="Main navigation">
+        <a href="#about">About</a><a href="#skills">Skills</a><a href="#projects">Work</a><a href="#contact">Contact</a>
+      </nav>
+      <a class="header-link" href="#contact">Let's talk <span>↗</span></a>
+    </header>
+
+    <main>
+      <section class="hero" id="home">
+        <div class="eyebrow"><span></span> Available for opportunities</div>
+        <p class="hero-kicker">Hi, I’m Shajid — a</p>
+        <h1>web developer<br><em>with intention.</em></h1>
+        <div class="hero-bottom">
+          <p>I turn thoughtful ideas into clear, engaging digital experiences that people enjoy using.</p>
+          <a class="round-button" href="#projects" aria-label="Explore my work">↓</a>
+        </div>
+        <div class="hero-orb orb-one"></div><div class="hero-orb orb-two"></div>
+      </section>
+
+      <section class="about section" id="about">
+        <div class="section-label">01 / ABOUT ME</div>
+        <div class="about-copy">
+          <h2>Building for the <em>people</em> on the other side of the screen.</h2>
+          <div><p>I’m an aspiring web developer who enjoys blending clean design with purposeful code. I care about the small details that make a website feel effortless.</p><a class="text-link" href="#contact">More about me <span>→</span></a></div>
+        </div>
+        <div class="stats"><div><strong>01+</strong><span>Years learning & creating</span></div><div><strong>06</strong><span>Projects brought to life</span></div><div><strong>∞</strong><span>Curiosity to grow</span></div></div>
+      </section>
+
+      <section class="skills section" id="skills">
+        <div class="section-label">02 / TOOLKIT</div>
+        <h2>Tools I use to turn<br>ideas into <em>reality.</em></h2>
+        <div class="skill-grid">
+          <article><span>01</span><h3>Frontend</h3><p>HTML, CSS, JavaScript, React</p></article>
+          <article><span>02</span><h3>Design</h3><p>Figma, UI design, responsive layouts</p></article>
+          <article><span>03</span><h3>Workflow</h3><p>Git, GitHub, VS Code, deployment</p></article>
+        </div>
+      </section>
+
+      <section class="projects section" id="projects">
+        <div class="project-heading"><div class="section-label">03 / SELECTED WORK</div><h2>A few things I’ve<br>made <em>with care.</em></h2></div>
+        <div class="project-list">
+          <article class="project-card card-a"><div class="card-top"><span>01</span><span>WEB DESIGN</span></div><div class="mock-ui"><div></div><div></div><div></div></div><div class="project-info"><h3>Focus Flow</h3><a href="#contact" aria-label="View Focus Flow project">↗</a></div><p>A calm productivity space for getting meaningful work done.</p></article>
+          <article class="project-card card-b"><div class="card-top"><span>02</span><span>FRONTEND</span></div><div class="mock-phone"><div class="phone-notch"></div><b>Good<br>morning.</b><small>Your daily wellbeing ritual.</small><i>↗</i></div><div class="project-info"><h3>Onda</h3><a href="#contact" aria-label="View Onda project">↗</a></div><p>Wellness tracking made warm, simple and personal.</p></article>
+          <article class="project-card card-c"><div class="card-top"><span>03</span><span>WEB APP</span></div><div class="mock-dashboard"><header>dashboard <span>● ●</span></header><div class="dash-grid"><i></i><i></i><i></i></div></div><div class="project-info"><h3>Study Sprint</h3><a href="#contact" aria-label="View Study Sprint project">↗</a></div><p>A student dashboard for planning smarter study sessions.</p></article>
+        </div>
+      </section>
+
+      <section class="experience section" id="experience"><div class="section-label">04 / JOURNEY</div><div class="timeline"><article><span>2025 — NOW</span><h3>Web Development<br>Intern</h3><p>Skillzeno</p></article><article><span>2024 — 2025</span><h3>Independent<br>Learning</h3><p>Building projects & sharpening my craft</p></article><article><span>2022 — 2025</span><h3>Computer Science<br>Student</h3><p>Learning the foundations of technology</p></article></div></section>
+
+      <section class="contact" id="contact">
+        <div class="section-label">05 / GET IN TOUCH</div>
+        <h2>Have an idea?<br><em>Let’s make it real.</em></h2>
+        <form id="contact-form" novalidate>
+          <label>Name<input id="name" name="name" type="text" placeholder="Your name" /></label>
+          <label>Email<input id="email" name="email" type="email" placeholder="you@email.com" /></label>
+          <label>Message<textarea id="message" name="message" placeholder="Tell me a little about your idea..."></textarea></label>
+          <p class="form-status" role="status"></p>
+          <button class="submit-button" type="submit">Send message <span>↗</span></button>
+        </form>
+        <footer><span>© 2025 SHAJID</span><div><a href="#home">Back to top ↑</a><a href="https://github.com" target="_blank" rel="noreferrer">GitHub ↗</a><a href="https://linkedin.com" target="_blank" rel="noreferrer">LinkedIn ↗</a></div></footer>
+      </section>
+    </main>
+    <script src="script.js"></script>
+  </body>
+</html>
