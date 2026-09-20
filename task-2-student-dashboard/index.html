@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FocusBoard — Student Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar"><a class="logo" href="#">focus<span>board</span></a><p class="mini-label">STUDENT SPACE</p>
+      <nav><a class="active" href="#dashboard">⌂ <span>Overview</span></a><a href="#tasks">✓ <span>My tasks</span></a><a href="#notes">▤ <span>Notes</span></a><a href="#goals">◎ <span>Daily goals</span></a></nav>
+      <div class="sidebar-bottom"><div class="quote">“Small progress is still progress.”</div><button id="reset-data" class="ghost-btn">Reset sample data</button></div>
+    </aside>
+    <main>
+      <header><div><p class="mini-label" id="today-label"></p><h1>Good morning, Shajid <span>✦</span></h1></div><button class="add-btn" id="open-task-modal">+ Add task</button></header>
+      <section class="hero" id="dashboard"><div><p class="mini-label">TODAY'S FOCUS</p><h2 id="focus-title">Make today count.</h2><p id="focus-text">Build momentum, one meaningful task at a time.</p></div><div class="hero-art"><span>✦</span><i></i><b></b></div></section>
+      <section class="stat-grid" aria-label="Task statistics"><article><span class="stat-icon blue">✓</span><div><strong id="total-count">0</strong><p>Total tasks</p></div></article><article><span class="stat-icon orange">↗</span><div><strong id="pending-count">0</strong><p>In progress</p></div></article><article><span class="stat-icon green">✦</span><div><strong id="done-count">0</strong><p>Completed</p></div></article><article class="progress-card"><div class="progress-heading"><p>Weekly progress</p><strong id="progress-value">0%</strong></div><div class="progress-track"><span id="progress-bar"></span></div><small id="progress-message">Let's get started!</small></article></section>
+      <section class="content-grid"><section class="task-panel" id="tasks"><div class="section-heading"><div><p class="mini-label">TASKS</p><h2>What’s on your list?</h2></div><button class="icon-btn" id="open-task-modal" aria-label="Add task">+</button></div><div class="tools"><label class="search"><span>⌕</span><input id="task-search" type="search" placeholder="Search tasks" /></label><select id="status-filter" aria-label="Filter tasks"><option value="all">All tasks</option><option value="pending">To do</option><option value="completed">Completed</option></select></div><div id="task-list" class="task-list"></div><p id="empty-tasks" class="empty-state" hidden>No tasks found. Add one to get moving.</p></section>
+      <aside class="right-column"><section class="goals-card" id="goals"><div class="section-heading"><div><p class="mini-label">DAILY GOAL</p><h2>Today’s goal</h2></div><button class="text-btn" id="edit-goal">Edit</button></div><div class="goal-number"><strong id="goal-done">0</strong><span>/ <span id="goal-total">3</span> tasks complete</span></div><div class="goal-dots" id="goal-dots"></div><p class="goal-note" id="goal-note">Complete 3 tasks to win the day.</p></section>
+      <section class="notes-card" id="notes"><div class="section-heading"><div><p class="mini-label">QUICK NOTES</p><h2>Capture a thought</h2></div></div><textarea id="note-input" placeholder="Write a quick note..."></textarea><button class="note-save" id="save-note">Save note <span>→</span></button><div id="note-list" class="note-list"></div></section></aside></section>
+    </main>
+  </div>
+  <dialog id="task-modal"><form method="dialog" id="task-form"><div class="modal-heading"><h2 id="modal-title">Add a task</h2><button value="cancel" class="close-btn" aria-label="Close">×</button></div><input type="hidden" id="task-id"><label>Task title<input id="task-title" required maxlength="70" placeholder="e.g. Finish biology notes" /></label><div class="form-row"><label>Due date<input id="task-date" type="date" required /></label><label>Priority<select id="task-priority"><option value="High">High</option><option value="Medium" selected>Medium</option><option value="Low">Low</option></select></label></div><label>Category<input id="task-category" maxlength="25" placeholder="e.g. Study, Personal" /></label><button class="submit-task" value="default">Save task <span>→</span></button></form></dialog>
+  <dialog id="goal-modal"><form method="dialog" id="goal-form"><div class="modal-heading"><h2>Set daily goal</h2><button value="cancel" class="close-btn" aria-label="Close">×</button></div><label>Tasks to complete today<input id="goal-input" type="number" min="1" max="15" required /></label><button class="submit-task" value="default">Save goal <span>→</span></button></form></dialog>
+  <script src="script.js"></script>
+</body></html>
