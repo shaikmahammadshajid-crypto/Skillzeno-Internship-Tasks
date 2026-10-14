@@ -1,87 +1,108 @@
+
 import "dotenv/config";
-import express from "express";
+import express, { type Request, type Response } from "express";
 import cors from "cors";
 import rateLimit from "express-rate-limit";
-import OpenAI from "openai";
+import { GoogleGenAI } from "@google/genai";
 import { z } from "zod";
 
 const app = express();
-const port = Number(process.env.PORT || 4000);
-const clientOrigin = process.env.CLIENT_ORIGIN || "http://localhost:5173";
+const PORT = Number(process.env.PORT) || 4000;
+const FRONTEND_URL =
+  process.env.FRONTEND_URL || "http://localhost:5173";
 
 app.disable("x-powered-by");
-app.use(cors({ origin: clientOrigin }));
-app.use(express.json({ limit: "32kb" }));
+app.use(cors({ origin: FRONTEND_URL, methods: ["GET", "POST"] }));
+app.use(express.json({ limit: "1mb" }));
 
-app.use("/api", rateLimit({
-  windowMs: 60_000,
-  limit: 20,
-  standardHeaders: "draft-7",
-  legacyHeaders: false,
-  message: { error: "Too many requests. Please wait a minute and try again." }
-}));
-
-app.get("/api/health", (_req, res) => {
-  res.json({ status: "ok", service: "StudyPilot AI API" });
-});
+app.use(
+  "/api/assistant",
+  rateLimit({
+    windowMs: 15 * 60 * 1000,
+    limit: 30,
+    standardHeaders: true,
+    legacyHeaders: false,
+  })
+);
 
 const requestSchema = z.object({
   mode: z.enum(["ask", "summarize", "quiz", "plan"]),
-  prompt: z.string().trim().min(3, "Enter at least 3 characters.").max(8000, "Keep your input under 8,000 characters.")
+  prompt: z.string().trim().min(1).max(12000),
 });
 
-const instructions: Record<z.infer<typeof requestSchema>["mode"], string> = {
-  ask: "You are StudyPilot AI, a patient study tutor. Explain accurately in clear student-friendly language. Use headings and examples when helpful. If a request is ambiguous, state the assumption. Do not invent citations.",
-  summarize: "You are StudyPilot AI. Summarize the user's supplied material faithfully. Use a concise overview, key points, and important terms. Do not add unsupported facts. If no source material is provided, ask the user to paste it.",
-  quiz: "You are StudyPilot AI. Create a useful quiz from the topic or notes. Provide 5 questions, four options for multiple-choice questions, then an answer key with brief explanations at the end. Do not put answers immediately after each question.",
-  plan: "You are StudyPilot AI, a study-planning coach. Build a realistic, structured study plan based on the user's goal, time available, and constraints. If details are missing, state reasonable assumptions and give an adaptable plan."
+const instructions = {
+  ask: "Answer the student's question accurately and explain difficult ideas step by step.",
+  summarize: "Summarize the supplied content into concise notes with headings and key takeaways.",
+  quiz: "Create a practice quiz on the supplied topic, with answers and brief explanations.",
+  plan: "Create a realistic study plan with focused sessions, breaks, and revision tasks.",
 };
 
-app.post("/api/assistant", async (req, res) => {
+app.get("/api/health", (_req: Request, res: Response) => {
+  res.json({ status: "ok", service: "StudyPilot AI API" });
+});
+
+app.post("/api/assistant", async (req: Request, res: Response) => {
   const parsed = requestSchema.safeParse(req.body);
+
   if (!parsed.success) {
-    return res.status(400).json({
-      error: parsed.error.issues[0]?.message || "Please check your input."
+    res.status(400).json({
+      error: "Provide a valid mode and a prompt between 1 and 12000 characters.",
     });
+    return;
   }
 
-  const apiKey = process.env.AI_API_KEY;
-  if (!apiKey || apiKey === "replace_with_your_private_api_key") {
-    return res.status(503).json({
-      error: "AI service is not configured. Add your provider key to server/.env, then restart the server."
+  const apiKey = process.env.GEMINI_API_KEY;
+
+  if (!apiKey) {
+    res.status(503).json({
+      error: "Gemini is not configured. Add GEMINI_API_KEY to server/.env.",
     });
+    return;
   }
 
   try {
-    const client = new OpenAI({
-      apiKey,
-      ...(process.env.AI_BASE_URL ? { baseURL: process.env.AI_BASE_URL } : {})
+    const ai = new GoogleGenAI({ apiKey });
+    const model = process.env.AI_MODEL || "gemini-3.8-flash";
+
+    const result = await ai.models.generateContent({
+      model,
+      contents: parsed.data.prompt,
+      config: {
+        systemInstruction:
+          "You are StudyPilot AI, a helpful academic study assistant. Be accurate, organized, encouraging, and transparent when uncertain. " +
+          instructions[parsed.data.mode],
+        temperature: 0.5,
+      },
     });
 
-    const completion = await client.chat.completions.create({
-      model: process.env.AI_MODEL || "gpt-4o-mini",
-      messages: [
-        { role: "system", content: instructions[parsed.data.mode] },
-        { role: "user", content: parsed.data.prompt }
-      ],
-      temperature: parsed.data.mode === "quiz" ? 0.6 : 0.4
-    });
+    const answer = result.text?.trim();
 
-    const answer = completion.choices[0]?.message?.content?.trim();
     if (!answer) {
-      return res.status(502).json({ error: "The AI returned an empty response. Please try again." });
+      res.status(502).json({
+        error: "Gemini returned an empty response. Please try again.",
+      });
+      return;
     }
 
-    return res.json({ answer, mode: parsed.data.mode });
-  } catch (error) {
-    // Log technical details on the server only; never return credentials or provider internals.
-    console.error("AI request failed:", error instanceof Error ? error.message : "Unknown error");
-    return res.status(502).json({
-      error: "The AI request failed. Check your API key, model name, provider quota, and network connection, then try again."
+    res.json({ answer, mode: parsed.data.mode, model });
+  } catch (error: unknown) {
+    const message =
+      error instanceof Error ? error.message : String(error);
+
+    console.error("Gemini request failed:", message);
+
+    const isUnavailable =
+      message.includes('"code":503') ||
+      message.includes("UNAVAILABLE");
+
+    res.status(isUnavailable ? 503 : 502).json({
+      error: isUnavailable
+        ? "Gemini is temporarily busy. Please try again in a few seconds."
+        : "Gemini request failed. Check the backend logs for details.",
     });
   }
 });
 
-app.listen(port, () => {
-  console.log(`StudyPilot AI API listening on http://localhost:${port}`);
+app.listen(PORT, () => {
+  console.log(`StudyPilot AI API running at http://localhost:${PORT}`);
 });
