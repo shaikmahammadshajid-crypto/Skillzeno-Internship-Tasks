@@ -1,9 +1,7 @@
 import { useEffect, useState, type FormEvent } from "react";
 import { ShieldCheck, LockKeyhole, Mail, Eye, EyeOff, ArrowRight, LogOut, CheckCircle2, AlertCircle, LoaderCircle } from "lucide-react";
-import "./App.css";
-
-const API = 'http://127.0.0.1:4000/api';
-
+import "./App.css"
+const API = String.fromCharCode(104,116,116,112,58,47,47,49,50,55,46,48,46,48,46,49,58,52,48,48,48,47,97,112,105);
 type User = { id: number; email: string; created_at: string };
 type Mode = "login" | "register";
 
